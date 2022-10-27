@@ -6,6 +6,8 @@ This is for a code review and refactoring exercise
 import math
 import random
 
+FILENAME = "scores.txt"
+
 DEFAULT_LOW = 1
 DEFAULT_HIGH = 10
 
@@ -24,16 +26,16 @@ def main():
         elif choice == "S":
             high = set_limit(low)
         elif choice == "H":
-            get_high_scores()
+            get_high_scores(FILENAME)
         else:
             print("Invalid choice")
         choice = input("(P)lay, (S)et limit, (H)igh scores, (Q)uit: ").upper()
     print(f"Thanks for playing ({number_of_games} times)!")
 
 
-def save_scores(number_of_guesses, low, high):
+def save_scores(number_of_guesses, low, high, filename):
     """Save score to scores.txt with range"""
-    with open("scores.txt", "a", encoding="utf-8") as outfile:
+    with open(filename, "a", encoding="utf-8") as outfile:
         print(f"{number_of_guesses}|{high - low + 1}", file=outfile)
 
 
@@ -56,7 +58,7 @@ def play(low, high):
         pass
     choice = input("Do you want to save your score? (y/N) ")
     if choice.upper() == "Y":
-        save_scores(number_of_guesses, low, high)
+        save_scores(number_of_guesses, low, high, FILENAME)
         return
     print("Fine then.")
 
@@ -88,10 +90,10 @@ def is_score_good(number_of_guesses, range_):
     return number_of_guesses <= math.ceil(math.log2(range_))
 
 
-def get_high_scores():
-    """Get high scores from scores.txt"""
+def get_high_scores(filename):
+    """Get high scores from filename"""
     scores = []
-    with open("scores.txt", encoding="utf-8") as in_file:
+    with open(filename, encoding="utf-8") as in_file:
         for line in in_file:
             line = line.split("|")
             scores.append((int(line[0]), int(line[1])))
