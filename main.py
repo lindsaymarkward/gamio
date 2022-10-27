@@ -76,6 +76,7 @@ def set_limit(low):
 
 
 def get_valid_number(prompt):
+    number = 1
     is_valid = False
     while not is_valid:
         try:
