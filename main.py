@@ -50,7 +50,7 @@ def play(low, high):
             print("Lower")
         guess = int(input(f"Guess a number between {low} and {high}: "))
     print(f"You got it in {number_of_guesses} guesses.")
-    if good_score(number_of_guesses, high - low + 1):
+    if is_score_good(number_of_guesses, high - low + 1):
         print("Good guessing!")
     else:
         pass
@@ -83,7 +83,7 @@ def get_valid_number(prompt):
     return number
 
 
-def good_score(number_of_guesses, range_):
+def is_score_good(number_of_guesses, range_):
     """Check if score is good."""
     return number_of_guesses <= math.ceil(math.log2(range_))
 
@@ -97,7 +97,7 @@ def get_high_scores():
             scores.append((int(line[0]), int(line[1])))
     scores.sort()
     for score in scores:
-        marker = "!" if good_score(score[0], score[1]) else ""
+        marker = "!" if is_score_good(score[0], score[1]) else ""
         print(f"{score[0]} ({score[1]}) {marker}")
 
 
