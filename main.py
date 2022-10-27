@@ -24,14 +24,14 @@ def main():
         elif choice == "S":
             high = set_limit(low)
         elif choice == "H":
-            high_scores()
+            determine_high_scores()
         else:
             print("Invalid choice")
         choice = input("(P)lay, (S)et limit, (H)igh scores, (Q)uit: ").upper()
     print(f"Thanks for playing ({number_of_games} times)!")
 
 
-def score_save(number_of_guesses, low, high):
+def save_scores(number_of_guesses, low, high):
     """Save score to scores.txt with range"""
     with open("scores.txt", "a", encoding="utf8") as outfile:
         print(f"{number_of_guesses}|{high - low + 1}", file=outfile)
@@ -50,13 +50,13 @@ def play(low, high):
             print("Lower")
         guess = int(input(f"Guess a number between {low} and {high}: "))
     print(f"You got it in {number_of_guesses} guesses.")
-    if good_score(number_of_guesses, high - low + 1) is True:
+    if determine_good_score(number_of_guesses, high - low + 1) is True:
         print("Good guessing!")
     else:
         pass
     choice = input("Do you want to save your score? (y/N) ")
     if choice.upper() == "Y":
-        score_save(number_of_guesses, low, high)
+        save_scores(number_of_guesses, low, high)
         return
     print("Fine then.")
 
@@ -83,14 +83,14 @@ def get_valid_number(prompt):
     return number
 
 
-def good_score(number_of_guesses, range_):
+def determine_good_score(number_of_guesses, range_):
     """Determine if score is good"""
     if number_of_guesses <= math.ceil(math.log2(range_)):
         return True
     return False
 
 
-def high_scores():
+def determine_high_scores():
     """determine high scores from a file of scores"""
     scores = []
     with open("scores.txt", encoding="utf8") as in_file:
@@ -99,7 +99,7 @@ def high_scores():
             scores.append((int(line[0]), int(line[1])))
     scores.sort()
     for score in scores:
-        marker = "!" if good_score(score[0], score[1]) else ""
+        marker = "!" if determine_good_score(score[0], score[1]) else ""
         print(f"{score[0]} ({score[1]}) {marker}")
 
 
