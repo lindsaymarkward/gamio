@@ -6,6 +6,9 @@ This is for a code review and refactoring exercise
 import math
 import random
 
+import flake8 as flake8
+import pylint as pylint
+
 DEFAULT_LOW = 1
 DEFAULT_HIGH = 10
 
@@ -31,7 +34,7 @@ def main():
     print(f"Thanks for playing ({number_of_games} times)!")
 
 
-def scoresave(number_of_guesses, low, high):
+def save_score(number_of_guesses, low, high):
     """Save score to scores.txt with range"""
     with open("scores.txt", "a") as outfile:
         print(f"{number_of_guesses}|{high - low + 1}", file=outfile)
@@ -56,10 +59,11 @@ def play(low, high):
         pass
     choice = input("Do you want to save your score? (y/N) ")
     if choice.upper() == "Y":
-        scoresave(number_of_guesses, low, high)
+        save_score(number_of_guesses, low, high)
         return
     else:
         print("Fine then.")
+
 
 def set_limit(low):
     """Set high limit to new value from user input."""
@@ -73,17 +77,18 @@ def set_limit(low):
 
 def get_valid_number(prompt):
     is_valid = False
-    while is_valid == False:
+    while not is_valid:
         try:
             number = int(input(prompt))
             is_valid = True
         except ValueError:
             print("Invalid number")
     return number
+
+
 def good_score(number_of_guesses, range_):
     if number_of_guesses <= math.ceil(math.log2(range_)):
         return True
-
 
 
 def high_scores():
@@ -96,5 +101,6 @@ def high_scores():
     for score in scores:
         marker = "!" if good_score(score[0], score[1]) else ""
         print(f"{score[0]} ({score[1]}) {marker}")
+
 
 main()
