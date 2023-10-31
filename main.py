@@ -12,28 +12,27 @@ DEFAULT_HIGH = 10
 
 def main():
     """Menu-driven guessing game with option to change high limit."""
-    low = DEFAULT_LOW
-    high = DEFAULT_HIGH
     number_of_games = 0
     print("Welcome to the guessing game")
     choice = input("(P)lay, (S)et limit, (H)igh scores, (Q)uit: ").upper()
     while choice != "Q":
         if choice == "P":
-            play(low, high)
+            play(DEFAULT_LOW, DEFAULT_HIGH)
             number_of_games += 1
         elif choice == "S":
-            high = set_limit(low)
+            set_limit(DEFAULT_LOW)
         elif choice == "H":
-            high_scores()
+            get_high_scores()
         else:
             print("Invalid choice")
         choice = input("(P)lay, (S)et limit, (H)igh scores, (Q)uit: ").upper()
+    save_score(number_of_games, DEFAULT_LOW, DEFAULT_HIGH)
     print(f"Thanks for playing ({number_of_games} times)!")
 
 
-def scoresave(number_of_guesses, low, high):
+def save_score(number_of_guesses, low, high):
     """Save score to scores.txt with range"""
-    with open("scores.txt", "a") as outfile:
+    with open("scores.txt", "a", encoding="utf-8") as outfile:
         print(f"{number_of_guesses}|{high - low + 1}", file=outfile)
 
 
@@ -50,16 +49,16 @@ def play(low, high):
             print("Lower")
         guess = int(input(f"Guess a number between {low} and {high}: "))
     print(f"You got it in {number_of_guesses} guesses.")
-    if good_score(number_of_guesses, high - low + 1) == True:
+    if is_good_score(number_of_guesses, high - low + 1):
         print("Good guessing!")
     else:
         pass
     choice = input("Do you want to save your score? (y/N) ")
     if choice.upper() == "Y":
-        scoresave(number_of_guesses, low, high)
+        save_score(number_of_guesses, low, high)
         return
-    else:
-        print("Fine then.")
+    print("Fine then.")
+
 
 def set_limit(low):
     """Set high limit to new value from user input."""
@@ -72,29 +71,38 @@ def set_limit(low):
 
 
 def get_valid_number(prompt):
+    """Get a valid number."""
     is_valid = False
-    while is_valid == False:
+    while not is_valid:
         try:
             number = int(input(prompt))
             is_valid = True
         except ValueError:
             print("Invalid number")
-    return number
-def good_score(number_of_guesses, range_):
-    if number_of_guesses <= math.ceil(math.log2(range_)):
-        return True
+    return number  # Ignore Pycharm warning
 
 
+def is_good_score(number_of_guesses, range_):
+    """Determine if the number of guesses if a good score."""
+    return number_of_guesses <= math.ceil(math.log2(range_))
 
-def high_scores():
+
+def get_high_scores():
+    """Get the high scores."""
     scores = []
-    with open("scores.txt") as in_file:
+    with open("scores.txt", "r", encoding="utf-8") as in_file:
         for line in in_file:
             line = line.split("|")
             scores.append((int(line[0]), int(line[1])))
     scores.sort()
+    mark_good_score(scores)
+
+
+def mark_good_score(scores):
+    """Mark a good score with an !"""
     for score in scores:
-        marker = "!" if good_score(score[0], score[1]) else ""
+        marker = "!" if is_good_score(score[0], score[1]) else ""
         print(f"{score[0]} ({score[1]}) {marker}")
+
 
 main()
