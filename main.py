@@ -22,7 +22,7 @@ def main():
         elif choice == "S":
             set_limit(DEFAULT_LOW)
         elif choice == "H":
-            high_scores()
+            get_high_scores()
         else:
             print("Invalid choice")
         choice = input("(P)lay, (S)et limit, (H)igh scores, (Q)uit: ").upper()
@@ -87,14 +87,19 @@ def is_good_score(number_of_guesses, range_):
     return number_of_guesses <= math.ceil(math.log2(range_))
 
 
-def high_scores():
-    """Display high scores."""
+def get_high_scores():
+    """Get the high scores."""
     scores = []
     with open("scores.txt", "r", encoding="utf-8") as in_file:
         for line in in_file:
             line = line.split("|")
             scores.append((int(line[0]), int(line[1])))
     scores.sort()
+    mark_good_score(scores)
+
+
+def mark_good_score(scores):
+    """Mark a good score with an !"""
     for score in scores:
         marker = "!" if is_good_score(score[0], score[1]) else ""
         print(f"{score[0]} ({score[1]}) {marker}")
