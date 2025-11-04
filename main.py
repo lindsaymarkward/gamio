@@ -19,7 +19,9 @@ def main():
     choice = input("(P)lay, (S)et limit, (H)igh scores, (Q)uit: ").upper()
     while choice != "Q":
         if choice == "P":
-            play(low, high)
+            number_of_guesses = play(low, high)
+            print_result(number_of_guesses, low, high)
+            confirm_save_score(number_of_guesses, low, high)
             number_of_games += 1
         elif choice == "S":
             high = set_limit(low)
@@ -31,9 +33,10 @@ def main():
     print(f"Thanks for playing ({number_of_games} times)!")
 
 
-def scoresave(number_of_guesses, low, high):
+
+def save_score(number_of_guesses, low, high):
     """Save score to scores.txt with range"""
-    with open("scores.txt", "a") as outfile:
+    with open("scores.txt", "a", encoding="utf-8-sig") as outfile:
         print(f"{number_of_guesses}|{high - low + 1}", file=outfile)
 
 
@@ -49,15 +52,20 @@ def play(low, high):
         else:
             print("Lower")
         guess = int(input(f"Guess a number between {low} and {high}: "))
+    return number_of_guesses
+
+def print_result(number_of_guesses, low, high):
+    """Print the result message and feedback based on performance."""
     print(f"You got it in {number_of_guesses} guesses.")
-    if good_score(number_of_guesses, high - low + 1) == True:
+    if good_score(number_of_guesses, high - low + 1):
         print("Good guessing!")
-    else:
-        pass
+
+def confirm_save_score(number_of_guesses, low, high):
+    """Confirm and save scores to scores.txt"""
     choice = input("Do you want to save your score? (y/N) ")
     if choice.upper() == "Y":
-        scoresave(number_of_guesses, low, high)
-        return
+        save_score(number_of_guesses, low, high)
+        print("Score saved!")
     else:
         print("Fine then.")
 
@@ -72,21 +80,27 @@ def set_limit(low):
 
 
 def get_valid_number(prompt):
+    """Get valid number from user input."""
+    number = 0
     is_valid = False
-    while is_valid == False:
+    while not is_valid:
         try:
             number = int(input(prompt))
             is_valid = True
         except ValueError:
             print("Invalid number")
     return number
+
+
 def good_score(number_of_guesses, range_):
-    if number_of_guesses <= math.ceil(math.log2(range_)):
-        return True
+    """Function to Identify the good score."""
+    return number_of_guesses <= math.ceil(math.log2(range_))
+
 
 def high_scores():
+    """Function to display high scores."""
     scores = []
-    with open("scores.txt") as in_file:
+    with open("scores.txt", 'r', encoding="utf-8-sig") as in_file:
         for line in in_file:
             line = line.split("|")
             scores.append((int(line[0]), int(line[1])))
@@ -95,4 +109,5 @@ def high_scores():
         marker = "!" if good_score(score[0], score[1]) else ""
         print(f"{score[0]} ({score[1]}) {marker}")
 
-main()
+if __name__ == "__main__":
+    main()
