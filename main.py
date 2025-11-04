@@ -84,8 +84,6 @@ def good_score(number_of_guesses, range_):
     if number_of_guesses <= math.ceil(math.log2(range_)):
         return True
 
-
-
 def high_scores():
     scores = []
     with open("scores.txt") as in_file:
